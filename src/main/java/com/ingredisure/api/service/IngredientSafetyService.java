@@ -61,3 +61,4 @@ public class IngredientSafetyService {
         return new SafetyResult(verdict, matched, summary);
     }
 }
+
