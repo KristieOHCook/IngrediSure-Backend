@@ -37,7 +37,8 @@ public class AuthController {
         user.setRole("ROLE_USER");
         User saved = userRepo.save(user);
 
-        String token = jwtUtil.generateToken(saved.getUsername(), saved.getId());
+        String token = jwtUtil.generateToken(saved.getUsername(), saved.getId(), saved.getRole());
+  
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("token", token, "userId", saved.getId(),
                         "username", saved.getUsername(), "role", saved.getRole()));
@@ -51,7 +52,8 @@ public class AuthController {
         return userRepo.findByUsername(username)
                 .filter(u -> passwordEncoder.matches(password, u.getPassword()))
                 .map(u -> {
-                    String token = jwtUtil.generateToken(u.getUsername(), u.getId());
+                    String token = jwtUtil.generateToken(u.getUsername(), u.getId(), u.getRole());
+  
                     return ResponseEntity.ok(Map.of(
                             "token", token,
                             "userId", u.getId(),
