@@ -26,11 +26,13 @@ public class User {
     @Column(name = "phone")
     private String phone;
 
-    @Column(name = "email_opt_in")
-    private boolean emailOptIn = true;
+    @Column(name = "email_opt_in", columnDefinition = "TINYINT(1) DEFAULT 1")
+    private Boolean emailOptIn = true;
 
-    @Column(name = "sms_opt_in")
-    private boolean smsOptIn = false;
+    @Column(name = "sms_opt_in", columnDefinition = "TINYINT(1) DEFAULT 0")
+    private Boolean smsOptIn = false;
+
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getUsername() { return username; }
@@ -43,8 +45,8 @@ public class User {
     public void setRole(String role) { this.role = role; }
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
-    public boolean isEmailOptIn() { return emailOptIn; }
-    public void setEmailOptIn(boolean emailOptIn) { this.emailOptIn = emailOptIn; }
-    public boolean isSmsOptIn() { return smsOptIn; }
-    public void setSmsOptIn(boolean smsOptIn) { this.smsOptIn = smsOptIn; }
+    public Boolean isEmailOptIn() { return emailOptIn != null ? emailOptIn : true; }
+    public void setEmailOptIn(Boolean emailOptIn) { this.emailOptIn = emailOptIn != null ? emailOptIn : true; }
+    public Boolean isSmsOptIn() { return smsOptIn != null ? smsOptIn : false; }
+    public void setSmsOptIn(Boolean smsOptIn) { this.smsOptIn = smsOptIn != null ? smsOptIn : false; }
 }

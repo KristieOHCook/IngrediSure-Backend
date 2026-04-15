@@ -35,11 +35,10 @@ public class AuthController {
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
         user.setRole("ROLE_USER");
-        user.setPhone(body.getOrDefault("phone", ""));
-        user.setEmailOptIn(Boolean.parseBoolean(body.getOrDefault("emailOptIn", "true")));
-        user.setSmsOptIn(Boolean.parseBoolean(body.getOrDefault("smsOptIn", "false")));
+        try { user.setPhone(body.getOrDefault("phone", "")); } catch (Exception ignored) {}
+        try { user.setEmailOptIn(true); } catch (Exception ignored) {}
+        try { user.setSmsOptIn(false); } catch (Exception ignored) {}
         User saved = userRepo.save(user);
-
         String token = jwtUtil.generateToken(saved.getUsername(), saved.getId(), saved.getRole());
   
         return ResponseEntity.status(HttpStatus.CREATED)
