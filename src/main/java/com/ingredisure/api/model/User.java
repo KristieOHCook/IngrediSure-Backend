@@ -23,7 +23,14 @@ public class User {
     private String password;
 
     private String role;
+    @Column(name = "phone")
+    private String phone;
 
+    @Column(name = "email_opt_in")
+    private boolean emailOptIn = true;
+
+    @Column(name = "sms_opt_in")
+    private boolean smsOptIn = false;
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getUsername() { return username; }
@@ -34,4 +41,10 @@ public class User {
     public void setPassword(String password) { this.password = password; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+    public boolean isEmailOptIn() { return emailOptIn; }
+    public void setEmailOptIn(boolean emailOptIn) { this.emailOptIn = emailOptIn; }
+    public boolean isSmsOptIn() { return smsOptIn; }
+    public void setSmsOptIn(boolean smsOptIn) { this.smsOptIn = smsOptIn; }
 }
