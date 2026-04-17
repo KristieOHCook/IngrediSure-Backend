@@ -51,9 +51,10 @@ public class JwtUtil {
 
     public boolean isValid(String token) {
         try {
+            if (token == null || token.trim().isEmpty()) return false;
             Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(token);
             return true;
-        } catch (JwtException e) {
+        } catch (Exception e) {
             return false;
         }
     }
