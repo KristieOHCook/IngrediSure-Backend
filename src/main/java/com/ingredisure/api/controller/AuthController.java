@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -97,6 +98,11 @@ public class AuthController {
      * @param body JSON body containing username and password
      * @return 200 OK with JWT token, or 401 Unauthorized if credentials invalid
      */
+    @PostMapping("/users/login")
+    public ResponseEntity<?> usersLogin(@RequestBody Map<String, String> body) {
+        return login(body);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
         try {
