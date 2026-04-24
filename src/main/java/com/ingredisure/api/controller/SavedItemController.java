@@ -1,11 +1,14 @@
 package com.ingredisure.api.controller;
 
 import com.ingredisure.api.model.SavedItem;
+import com.ingredisure.api.model.User;
 import com.ingredisure.api.repository.SavedItemRepository;
+import com.ingredisure.api.repository.UserRepository;
 import com.ingredisure.api.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -15,6 +18,7 @@ import java.util.stream.Collectors;
 public class SavedItemController {
 
     @Autowired private SavedItemRepository savedItemRepo;
+    @Autowired private UserRepository userRepo;
     @Autowired private JwtUtil jwtUtil;
 
     @GetMapping("/user/{userId}")
@@ -31,11 +35,42 @@ public class SavedItemController {
             map.put("ingredients", item.getIngredients());
             map.put("safetyVerdict", item.getSafetyVerdict());
             map.put("matchedTriggers", item.getMatchedTriggers());
-            map.put("savedAt", item.getSavedAt() != null ?
-                    item.getSavedAt().toString() : "");
+            map.put("savedAt", item.getSavedAt() != null ? item.getSavedAt().toString() : "");
             return map;
         }).collect(Collectors.toList());
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> saveItem(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody Map<String, Object> body) {
+        try {
+            String token = authHeader.replace("Bearer ", "").trim();
+            Long userId = jwtUtil.extractUserId(token);
+            User user = userRepo.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+            SavedItem item = new SavedItem();
+            item.setUser(user);
+            item.setItemName((String) body.getOrDefault("itemName", "Unknown"));
+            item.setItemSource((String) body.getOrDefault("itemSource", "Grocery"));
+            item.setBrandOrRestaurant((String) body.getOrDefault("brandOrRestaurant", ""));
+            item.setIngredients((String) body.getOrDefault("ingredients", ""));
+            item.setSafetyVerdict((String) body.getOrDefault("safetyVerdict", "Unknown"));
+            item.setMatchedTriggers((String) body.getOrDefault("matchedTriggers", ""));
+            item.setSavedAt(LocalDateTime.now());
+
+            SavedItem saved = savedItemRepo.save(item);
+            Map<String, Object> result = new HashMap<>();
+            result.put("id", saved.getId());
+            result.put("itemName", saved.getItemName());
+            result.put("itemSource", saved.getItemSource());
+            result.put("safetyVerdict", saved.getSafetyVerdict());
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+        }
     }
 
     @DeleteMapping("/{id}")
